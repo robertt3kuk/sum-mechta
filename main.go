@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"math/big"
 	"os"
 	"strconv"
 	"sync"
@@ -37,7 +36,7 @@ func main() {
 	}
 
 	tasks := make(chan Number)
-	sum := make(chan *big.Int)
+	sum := make(chan int)
 
 	go func() {
 		for _, number := range numbers {
@@ -52,7 +51,7 @@ func main() {
 		go func() {
 			defer wg.Done()
 			for number := range tasks {
-				sum <- big.NewInt(int64(number.A + number.B))
+				sum <- number.A + number.B
 			}
 		}()
 	}
@@ -62,9 +61,9 @@ func main() {
 		close(sum)
 	}()
 
-	totalsum := big.NewInt(0)
+	totalsum := 0
 	for s := range sum {
-		totalsum.Add(totalsum, s)
+		totalsum += s
 	}
 	fmt.Println(totalsum)
 }
