@@ -49,10 +49,12 @@ func main() {
 	wg.Add(goRoutines)
 	for i := 0; i < goRoutines; i++ {
 		go func() {
+			var localSum int
 			defer wg.Done()
 			for number := range tasks {
-				sum <- number.A + number.B
+				localSum += number.A + number.B
 			}
+			sum <- localSum
 		}()
 	}
 
